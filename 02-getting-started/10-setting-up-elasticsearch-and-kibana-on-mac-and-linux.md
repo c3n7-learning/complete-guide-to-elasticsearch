@@ -99,3 +99,67 @@ Go to http://localhost:5601/?code=780426 to get started.
    - password: `zwDitFPJsDTqWgFTA7pn`
 
 5. When asked to _Start by adding integrations_, choose _Explore on my own_
+
+## Controlling Resource Utilization
+
+1. Elasticsearch won't start if your disk is 90% or more full
+2. You might want to limit the amount of RAM you make available to ES
+
+Create a file under `jvm.options.d/custom.options`:
+
+- This config limits min `-Xms2g` and max `-Xmx2g` ram to 2gb. You can change as you wish
+
+```
+-Xms2g
+-Xmx2g
+```
+
+## Working without HTTPS
+
+Update the master node to work without https
+
+- `elasticsearch.yml`:
+
+```yaml
+# Enable security features
+xpack.security.enabled: true
+
+xpack.security.enrollment.enabled: true
+
+# Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
+xpack.security.http.ssl:
+  enabled: false
+  keystore.path: certs/http.p12
+
+# Enable encryption and mutual authentication between cluster nodes
+xpack.security.transport.ssl:
+  enabled: false
+  # ...
+
+# Allow HTTP API connections from anywhere
+# Connections are encrypted and require user authentication
+http.host: 127.0.0.1
+
+# Allow other nodes to join the cluster from anywhere
+# Connections are encrypted and mutually authenticated
+transport.host: 127.0.0.1
+```
+
+Create a User for Kibana
+
+- Since you aren't using the automatic enrollment, you need to make sure you have a password for the `kibana_system` user (which Kibana uses to talk to Elasticsearch):
+
+```shell
+bin/elasticsearch-reset-password -u kibana_system
+```
+
+Copy that password and add it to kibana.yml:
+
+```yaml
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "your_generated_password"
+
+# ...
+# To disregard the validity of SSL certificates, change this setting's value to 'none'.
+elasticsearch.ssl.verificationMode: none
+```
