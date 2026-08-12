@@ -79,14 +79,14 @@ The operations are run sequentially
 - The query is not run within a transaction as we'd expect in a traditional RDBMS. That is by design
 
 ```
-                           ┌─────────┐
-                           │  Cloud  │
-                           │ Storage │
-                           └─────────┘
-                                ^
-                                │ Take snapshot
-                                │
-                               (✓)
+                                             ┌─────────┐
+                                             │  Cloud  │
+                                             │ Storage │
+                                             └─────────┘
+                                                  ^
+                                                  │ Take snapshot
+                                                  │
+                                                 (✓)
 
 POST /products/_update_by_query ────────> ┌──────────────┐
                                           │ Coordinating │ ───> (✓) ───> ┌─────────────────┐
@@ -94,15 +94,15 @@ POST /products/_update_by_query ────────> ┌──────�
                                           └──────────────┘               │ group A         │
                                                │                         └─────────────────┘
                                                │
-                                               ├────> (✗) ───> ┌─────────────────┐
-                                               │               │ Replication     │
-                                               │               │ group B         │
-                                               │               └─────────────────┘
+                                               ├──────────────> (✗) ───> ┌─────────────────┐
+                                               │                         │ Replication     │
+                                               │                         │ group B         │
+                                               │                         └─────────────────┘
                                                │
-                                               └────> (...) ───> ┌─────────────────┐
-                                                                 │ Replication     │
-                                                                 │ group C         │
-                                                                 └─────────────────┘
+                                               └────────────> (...) ───> ┌─────────────────┐
+                                                                         │ Replication     │
+                                                                         │ group C         │
+                                                                         └─────────────────┘
 ```
 
 - In the above diagram, documents in RG-C will remain in the old state, even though RG-A was okay.
