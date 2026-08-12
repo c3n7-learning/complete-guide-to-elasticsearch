@@ -11,6 +11,7 @@ ES uses the following formula to determine on which shard to store the document
 shard_num = hash(_routing) % num_primary_shards
 ```
 
+- The default value for `_routing` is the document's ID
 - The same formula also uses the same formula to get/update/deleting documents.
 - This formula works when searching by ID
 - The formula changes when using other searching parameters
