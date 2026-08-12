@@ -16,7 +16,7 @@ optional_source\n
 
 ## Demo
 
-- The index action essentially do an _update or create_ operation.
+- The index action essentially does an _update or create_ operation.
 - The create action will fail if the document already exists
 
 To do a bulk action:
