@@ -22,6 +22,47 @@ They include:
 - Used for any JSON object
 - Objects may be nested
 - Mapped using the `properties` parameter
+
+This json object:
+```json
+{
+  "name": "Coffee Maker",
+  "price": 64.2,
+  "in_stock": 10,
+  "is_active": true,
+  "manufacturer": {
+    "name": "Nespresso",
+    "country": "Switzerland"
+    "owned_by": {
+      "name": "Nestle Group",
+      "country": "Switzerland"
+    }
+  }
+}
+```
+
+Can be mapped like:
+```
+PUT /products
+{
+  "mappings": {
+    "...": "...",
+    "properties": {
+      "manufacturer": {
+        "name": { "type": "text" },
+        "country": { "type": "text" },
+        "owned_by": {
+          "properties": {
+            "name": { "type": "text" },
+            "country": { "type": "text" }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
 - Objects are **not** stored as objects in Apache Lucene
   - Objects are transformed to ensure that we can index any valid JSON
   - In particulary, objects are flattened
@@ -151,7 +192,7 @@ Now this query (only a Pseudo-query), will behave as we expect
 QUERY: MATCH products WHERE reviews.author == "John Doe" AND reviews.rating >= 4.0
 ```
 
-## `kewrod` data type
+## `keyword` data type
 
 - Used for exact matching of values
 - Typically used for filtering, aggregations, and sorting
