@@ -57,3 +57,11 @@ For an example with emails:
 | info@codingexplained.com | X           |             |             |
 | john@doe.com             |             | X           |             |
 | average@job.com          |             |             | X           |
+
+
+## Summary
+- `keyword` fields are analyzed with the `keyword` analyzer
+- The `keyword` analyzer is a no-op analyzer
+    - It outputs the unmodified string as a single token
+    - This token is then placed into the inverted index
+- `keyword` fields are used for exact matching, aggregations, and sorting
