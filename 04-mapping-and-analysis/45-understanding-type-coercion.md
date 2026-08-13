@@ -16,7 +16,7 @@ Example #1
 ```
 PUT /coercion_test/_doc/2
 {
-    "price": "7.4"
+    "price": 7.4
 }
 ```
 
