@@ -72,7 +72,7 @@ So, the standard analyzer can be summarized to look like this
 
 1. No _Character filters_ are done by default
 2. The standard _Tokenizer_ is run on the text
-   - It is more complex that that
+   - It is more complex than the below, but one can say it:
    - Basically one can say it splits the text into distinct "words"
    - It strips all punctuation
 3. The tokens are then passed on to the _Token filters_ called `lowercase`
