@@ -72,7 +72,7 @@ GET /reviews/_search
   - Only its target field, though. Not the original field
 - Simply perform a mapping update with a new `path` value
 - Possible because aliases don't affect indexing
-  - It's a query-construct
+  - It's a query-level construct
 
 ES does the translation for us internally.
 
