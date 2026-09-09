@@ -22,7 +22,7 @@ Example
   - Splits into tokens when encountering anything else than letters
 - Lowercases letters with the `lowercase` tokenizer (not a token filter)
   - A tokenizer is not usually supposed to do that
-  - Unusual and a performance hack
+  - This is unusual and `simple` analyzer uses it as a performance hack
 
 Example:
 
@@ -105,7 +105,7 @@ The `standard` tokenizer and a selection of filters are used:
 - `english_possessive_stemmer` - will remove things like "peter's" or "john's"
 - `lowercase` - lowercases all letters
 - `english_stop` - removes english stop words
-- `english_keywords` - tokens that match the keywords defined in this filter are assigned a key`word attribute of `true`. Subsequent stemmer filters will skip tokens that have the `keyword`attribute set to`true`.
+- `english_keywords` - tokens that match the keywords defined in this filter are assigned a `keyword` attribute of `true`. Subsequent stemmer filters will skip tokens that have the `keyword` attribute set to`true`.
 - `english_stemmer` - stems words for the english language
 
 We could add our own custom filters, e.g. to handle synonyms
