@@ -74,7 +74,7 @@ GET /products/_search
 How is `negative_boost` calculated
 
 - Documents which only match the positive clause, have their relevance scores unmodified
-- Documents which also match
+- Documents which also match the negative clause, their relevance score will be multiplied by the `negative_boost` parameter
 
 ## Without filtering (depriorityze everything apples)
 
