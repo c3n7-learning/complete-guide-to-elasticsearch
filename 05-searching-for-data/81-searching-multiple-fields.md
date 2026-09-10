@@ -146,7 +146,7 @@ GET /products/_search
 ```
 
 - Documents with vegetable in both the name and description get a higher score
-- The multimatch query will evaluate the score for each of the matched field, and pick the higher score
+- The multimatch query will evaluate the score for each of the matched field, and pick the higher score. For the first document, `12.698752` is picked and `8.510115` discarded
 - Documents are then sorted by the highest score
 
 ## Specifying a tie breaker
