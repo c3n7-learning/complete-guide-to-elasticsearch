@@ -214,6 +214,7 @@ GET /products/_search
 This shown above behaviour can be configured with the `minimum_should_match` parameter as follows:
 
 - The parameter supports more complex behaviour, e.g. percentages
+- `"minimum_should_match": 1`: At least one `should` query clause MUST match
 
 ```http
 GET /products/_search
@@ -270,6 +271,161 @@ GET /products/_search
   }
 }
 ```
+
+## Occurence Types
+
+- `must`: Query clauses are required tomatch and will contribute to relevance scores
+- `filter`: Query classes are required to match, but will not contribute to relevance scores. Query classes may therefore be cached for improved performance
+- `must_not`: Query classes must **not** match and do not affect relevance scoring. Query classes may therefore be cached for improved performance
+- `should`: Query classes **should** match. Relevance scores of matching documents are boosted for each matching query clause. Behaviour can be adjusted with `minimum_should_match`
+
+Here's a summary
+
+| Occurrence type | Required to match? | Affects relevance scores? | Can be cached? |
+| --------------- | ------------------ | ------------------------- | -------------- |
+| must            | Yes                | Yes                       | No             |
+| filter          | Yes                | No                        | Yes            |
+| must_not        | No                 | No                        | Yes            |
+| should          | Conditional        | Yes                       | No             |
+
+## The `match` query, revisited
+
+- `match` queries are actually translated to `bool` queries under the hood
+
+### Single term
+
+This query:
+
+```
+GET /products/_search
+{
+  "query": {
+    "match": {
+      "name": "PASTA"
+    }
+  }
+}
+```
+
+Is translated to:
+
+- Why a term-level query for this though! It's because this bool query output is based on the analysis process.
+
+```
+GET /products/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "name": "pasta"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+- The inverted index has terms that have been analyzed. So now we are comparing values that are in the same format
+
+| Term      | Document #1 |
+| --------- | ----------- |
+| "chicken" | X           |
+| "pasta"   | X           |
+| "with"    | X           |
+
+### Multiple terms (or operator)
+
+This query:
+
+```http
+GET /products/_search
+{
+  "query": {
+    "match": {
+      "name": "PASTA CHICKEN"
+    }
+  }
+}
+```
+
+Is translated to:
+
+- Since match queries don't require both terms to be present in the document, the `should` occurrence type makes sense.
+
+```http
+GET /products/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "name": "pasta"
+          }
+        },
+        {
+          "term": {
+            "name": "chicken"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+### Multiple terms (and operator)
+
+This query:
+
+```http
+GET /products/_search
+{
+  "query": {
+    "match": {
+      "name": {
+        "query": "PASTA CHICKEN",
+        "operator": "and"
+      }
+    }
+  }
+}
+```
+
+Is translated to:
+
+- Since now we require both terms to be present in the document, the `must` occurrence type makes sense.
+
+```http
+GET /products/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "name": "pasta"
+          }
+        },
+        {
+          "term": {
+            "name": "chicken"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+> Note:  
+> This is an oversimplification. It does more advanced stuff. This is just a simple look into how things work under the hood.
+
+## Examples
+
 
 ### Example #1
 
@@ -435,155 +591,3 @@ GET /products/_search
   }
 }
 ```
-
-## Occurence Types
-
-- `must`: Query clauses are required tomatch and will contribute to relevance scores
-- `filter`: Query classes are required to match, but will not contribute to relevance scores. Query classes may therefore be cached for improved performance
-- `must_not`: Query classes must **not** match and do not affect relevance scoring. Query classes may therefore be cached for improved performance
-- `should`: Query classes **should** match. Relevance scores of matching documents are boosted for each matching query clause. Behaviour can be adjusted with `minimum_should_match`
-
-Here's a summary
-
-| Occurrence type | Required to match? | Affects relevance scores? | Can be cached? |
-| --------------- | ------------------ | ------------------------- | -------------- |
-| must            | Yes                | Yes                       | No             |
-| filter          | Yes                | No                        | Yes            |
-| must_not        | No                 | No                        | Yes            |
-| should          | Conditional        | Yes                       | No             |
-
-## The `match` query, revisited
-
-- `match` queries are actually translated to `bool` queries under the hood
-
-### Single term
-
-This query:
-
-```
-GET /products/_search
-{
-  "query": {
-    "match": {
-      "name": "PASTA"
-    }
-  }
-}
-```
-
-Is translated to:
-
-- Why a term-level query for this though! It's because this bool query output is based on the analysis process.
-
-```
-GET /products/_search
-{
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "term": {
-            "name": "pasta"
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-- The inverted index has terms that have been analyzed. So now we are comparing values that are in the same format
-
-| Term      | Document #1 |
-| --------- | ----------- |
-| "chicken" | X           |
-| "pasta"   | X           |
-| "with"    | X           |
-
-### Multiple terms (or operator)
-
-This query:
-
-```http
-GET /products/_search
-{
-  "query": {
-    "match": {
-      "name": "PASTA CHICKEN"
-    }
-  }
-}
-```
-
-Is translated to:
-
-- Since match queries don't require both terms to be present in the document, the `should` occurrence type makes sense.
-
-```http
-GET /products/_search
-{
-  "query": {
-    "bool": {
-      "should": [
-        {
-          "term": {
-            "name": "pasta"
-          }
-        },
-        {
-          "term": {
-            "name": "chicken"
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-### Multiple terms (and operator)
-
-This query:
-
-```http
-GET /products/_search
-{
-  "query": {
-    "match": {
-      "name": {
-        "query": "PASTA CHICKEN",
-        "operator": "and"
-      }
-    }
-  }
-}
-```
-
-Is translated to:
-
-- Since now we require both terms to be present in the document, the `must` occurrence type makes sense.
-
-```http
-GET /products/_search
-{
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "term": {
-            "name": "pasta"
-          }
-        },
-        {
-          "term": {
-            "name": "chicken"
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-> Note:  
-> This is an oversimplification. It does more advanced stuff. This is just a simple look into how things work under the hood.
