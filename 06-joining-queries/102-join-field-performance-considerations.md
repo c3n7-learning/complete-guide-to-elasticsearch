@@ -26,9 +26,9 @@ In some scenarios, the performance of join fields won't be bad:
 Two questions remain:
 
 1. If using join fields is generally a bad idea, why did we spend an hour talking about it?
-   - In some cases, using join fields is completely find
+   - In some cases, using join fields is completely fine
      - If you don't have lots of documents, and won't have many documents anytime soon, performance will be fine
-   - Join fields are paret of ES, regardless of how often they are used or not
+   - Join fields are a part of ES, regardless of how often they are used or not
    - You need to decide if the tool is right for your particular job
 2. If join fields are bad, how do we map document relationships _properly_?
    - Consider using the nested data type
