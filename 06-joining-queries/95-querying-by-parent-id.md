@@ -6,6 +6,7 @@
 
 Example #1
 
+- We want employees for department 1
 - Run:
 
 ```http
@@ -22,6 +23,7 @@ GET /department/_search
 
 Example #2:
 
+- We want employees for department 2
 - Run:
 
 ```
