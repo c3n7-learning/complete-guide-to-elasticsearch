@@ -75,7 +75,7 @@ Output:
 In addition
 
 - ES highlights the original term in case we have synonyms in the query / document
-  - e.g, if the synonym for `weird` is `strange`, and we such `weird`, even though internally the query is replaced with `strange`, `weird` will be highlighted.
+  - e.g, if the synonym for `weird` is `strange`, and we search `weird`, even though internally the query is replaced with `strange`, `weird` will be highlighted.
 - Same is the case with stemming and so forth.
 
 ## Specifying a custom tag
