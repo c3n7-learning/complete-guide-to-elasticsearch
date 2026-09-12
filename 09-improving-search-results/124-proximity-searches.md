@@ -221,3 +221,5 @@ Output:
 | Query    | spicy      | sauce        |            |
 | Slop 1   | ———►       | spicy\|sauce |            |
 | Slop 2   |            | sauce        | ———► spicy |
+
+- The edit distance is not just for two terms, but all terms in a query, so if you have a longer query, and the maximum edit distance is utilized globally for that query
